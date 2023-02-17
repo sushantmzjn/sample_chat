@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/view/signup.dart';
+import 'package:flutter_firebase/view/signup_login.dart';
 import 'package:flutter_firebase/view/widgets/button.dart';
 import 'package:flutter_firebase/view/widgets/text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,10 +20,10 @@ class Login extends StatelessWidget {
               style: TextStyle(fontSize: 26.sp),
             ),
             MyTextField(
-                controller: null, myHintText: 'username', obsureText: false),
+                controller: null, myHintText: 'Username', obsureText: false),
             MyTextField(
               controller: null,
-              myHintText: 'password',
+              myHintText: 'Password',
               obsureText: true,
             ),
             MyButton(
@@ -47,7 +47,7 @@ class Login extends StatelessWidget {
             MyButton(
               onPressed: () {
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const SignUp()));
+                    MaterialPageRoute(builder: (context) => SignUp()));
               },
               text: 'Sign Up',
               btnColor: Colors.green,
