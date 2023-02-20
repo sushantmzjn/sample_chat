@@ -1,5 +1,21 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+
+//auto validate provider
+final autoValidateMode = StateNotifierProvider<AutoValidate, AutovalidateMode>((ref) => AutoValidate(AutovalidateMode.disabled));
+
+class AutoValidate extends StateNotifier<AutovalidateMode>{
+  AutoValidate(super.state);
+
+  void toggle(){
+    state = AutovalidateMode.onUserInteraction;
+  }
+  void autoValidateDisable(){
+    state = AutovalidateMode.disabled;
+  }
+}
+
 
 //signup login toggle
 final loginProvider = StateNotifierProvider<CommonProvider, bool>((ref) => CommonProvider(true));
@@ -24,7 +40,7 @@ class ImageProvider extends StateNotifier<XFile?>{
     if(isCamera){
       state = await _picker.pickImage(source: ImageSource.camera);
     }else{
-      state = await _picker.pickVideo(source: ImageSource.gallery);
+      state = await _picker.pickImage(source: ImageSource.gallery);
     }
 
   }
