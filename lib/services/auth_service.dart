@@ -2,10 +2,32 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_firebase/constant/firebase_instances.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
+final userStream = StreamProvider.autoDispose.family((ref, String userId) => AuthService.getUserById(userId));
+
 class AuthService {
+
+ static CollectionReference userDb =  FirebaseInstances.fireStore.collection('users');
+
+ static Stream<types.User> getUserById(String userId){
+      return userDb.doc(userId).snapshots().map((event) {
+        final json = event.data() as Map<String, dynamic>;
+        return types.User(
+          id: event.id,
+          firstName: json['firstName'],
+          imageUrl: json['imageUrl'],
+          metadata: {
+            'email' : json['metadata']['email'],
+            'token' : json['metadata']['token'],
+          }
+
+        );
+      });
+  }
+
   //user signup
   static Future<Either<String, bool>> userSignUp(
       {required String email,
