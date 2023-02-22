@@ -25,7 +25,7 @@ class SignUp extends ConsumerWidget {
       if(next.isError){
         SnackShow.showFailure(context, next.errMessage);
       }else if(next.isSuccess){
-        SnackShow.showSuccess(context, 'success');
+        SnackShow.showSuccess(context, next.errMessage);
       }
     });
     final auth = ref.watch(authProvider);

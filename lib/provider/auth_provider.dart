@@ -1,10 +1,10 @@
 import 'package:flutter_firebase/constant/firebase_instances.dart';
-import 'package:flutter_firebase/model/auth_state.dart';
+import 'package:flutter_firebase/model/common_state.dart';
 import 'package:flutter_firebase/services/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-final defaultState = AuthState(
+final defaultState = CommonState(
     errMessage: '', 
     isError: false, 
     isLoad: false,
@@ -14,9 +14,9 @@ final defaultState = AuthState(
 final authStream = StreamProvider((ref) => FirebaseInstances.firebaseAuth.authStateChanges());
 
 
-final authProvider = StateNotifierProvider<AuthProvider, AuthState>((ref) => AuthProvider(defaultState));
+final authProvider = StateNotifierProvider<AuthProvider, CommonState>((ref) => AuthProvider(defaultState));
 
-class AuthProvider extends StateNotifier<AuthState> {
+class AuthProvider extends StateNotifier<CommonState> {
   AuthProvider(super.state);
   //user sign up
   Future<void> userSignUp(
@@ -32,7 +32,7 @@ class AuthProvider extends StateNotifier<AuthState> {
               state = state.copyWith(isLoad: false, isError: true, isSuccess: false, errMessage: l);
             },
             (r) {
-              state = state.copyWith(isLoad: false, isError: false, isSuccess: r, errMessage: '');
+              state = state.copyWith(isLoad: false, isError: false, isSuccess: r, errMessage: 'SignUp Success');
             });
   }
   //user login
@@ -48,7 +48,7 @@ class AuthProvider extends StateNotifier<AuthState> {
           state = state.copyWith(isLoad: false, isError: true, isSuccess: false, errMessage: l);
         },
             (r) {
-          state = state.copyWith(isLoad: false, isError: false, isSuccess: r, errMessage: '');
+          state = state.copyWith(isLoad: false, isError: false, isSuccess: r, errMessage: 'Welcome Back');
         });
   }
 

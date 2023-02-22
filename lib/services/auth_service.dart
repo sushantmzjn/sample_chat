@@ -8,10 +8,14 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 final userStream = StreamProvider.autoDispose.family((ref, String userId) => AuthService.getUserById(userId));
 
+//users list
+final usersStream = StreamProvider((ref) => FirebaseInstances.fireChat.users());
+
 class AuthService {
 
  static CollectionReference userDb =  FirebaseInstances.fireStore.collection('users');
 
+ //user detail fetch
  static Stream<types.User> getUserById(String userId){
       return userDb.doc(userId).snapshots().map((event) {
         final json = event.data() as Map<String, dynamic>;
@@ -53,6 +57,7 @@ class AuthService {
             lastName: '',
             metadata: {'email': email, 'token': token}),
       );
+      await FirebaseFirestore.instance.clearPersistence();
       return Right(true);
     } on FirebaseException catch (err) {
       return Left('${err.message}');

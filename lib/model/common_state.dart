@@ -1,18 +1,18 @@
-class AuthState {
+class CommonState {
   final bool isLoad;
   final bool isSuccess;
   final bool isError;
   final String errMessage;
 
-  AuthState(
+  CommonState(
       {required this.errMessage,
       required this.isError,
       required this.isLoad,
       required this.isSuccess});
 
-  AuthState copyWith(
+  CommonState copyWith(
       {bool? isLoad, bool? isSuccess, bool? isError, String? errMessage}) {
-    return AuthState(
+    return CommonState(
         errMessage: errMessage ?? this.errMessage,
         isError: isError ?? this.isSuccess,
         isLoad: isLoad ?? this.isLoad,
