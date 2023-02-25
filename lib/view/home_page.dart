@@ -1,12 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/constant/firebase_instances.dart';
+import 'package:flutter_firebase/services/post_service.dart';
 import 'package:flutter_firebase/view/create_post.dart';
-import 'package:flutter_firebase/view/login.dart';
-import 'package:flutter_firebase/view/signup_login.dart';
-import 'package:flutter_firebase/view/status.dart';
-import 'package:flutter_firebase/view/widgets/button.dart';
-import 'package:flutter_firebase/view/widgets/text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -24,9 +20,10 @@ class HomePage extends ConsumerWidget {
     final userData = ref.watch(userStream(userId));
     final logout = ref.watch(authProvider);
     final userList = ref.watch(usersStream);
+    final postData = ref.watch(postStream);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sample Chat'),
+        title:const Text('Sample Chat'),
         elevation: 0,
         actions: [
           IconButton(
@@ -69,10 +66,8 @@ class HomePage extends ConsumerWidget {
                           height: 110,
                           alignment: Alignment.center,
                           fit: BoxFit.cover,
-                          errorWidget: (context, url, err) =>
-                              Center(child: Text('$err')),
-                          placeholder: (context, url) =>
-                              Center(child: Text('loading...')),
+                          errorWidget: (context, url, err) => Center(child: Text('$err')),
+                          placeholder: (context, url) =>const Center(child: Text('loading...')),
                           imageUrl: data.imageUrl!,
                         ),
                       ),
@@ -147,7 +142,67 @@ class HomePage extends ConsumerWidget {
                   });
                 },
                 error: (error,stack)=> Center(child: Text('$error'),),
-                loading: ()=> Container()),
+                loading: ()=> const Center(child: Text('loading...'))),
+          ),
+          Expanded(
+              child: postData.when(
+                  data: (data){
+                    return ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, index){
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(data[index].title),
+                                    if(data[index].userId == userId)
+                                      GestureDetector(
+                                        onTap: (){
+                                          Get.defaultDialog(
+                                            content: Text('Edit or Delete Post'),
+                                            actions:[
+                                              TextButton(onPressed: (){}, child: Text('edit')),
+                                              TextButton(onPressed: (){}, child: Text('delete')),
+                                            ]
+                                          );
+                                        },
+                                          child: Icon(Icons.more_vert_outlined)
+                                      ),
+                                  ],
+                                ),
+                                SizedBox(height: 5.h),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  child: CachedNetworkImage(
+                                    height: 200.h,
+                                    width: double.infinity,
+                                    fit: BoxFit.fill,
+                                    placeholder: (context,url)=> const Center(child: Text('loading...')),
+                                      imageUrl: data[index].imageUrl
+                                  ),
+                                ),
+                                if(data[index].userId != userId) GestureDetector(
+                                  onTap: (){},
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Icon(
+                                      Icons.thumb_up_alt_outlined
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+
+                    });
+                  },
+                  error: (error,stack)=> Center(child: Text('$error'),),
+                  loading: ()=> const Center(child: CircularProgressIndicator()))
+
           )
         ],
       ),

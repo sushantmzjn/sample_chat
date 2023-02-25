@@ -24,7 +24,7 @@ class CreatePage extends ConsumerWidget {
       if(next.isError){
         SnackShow.showFailure(context, next.errMessage);
       }else if(next.isSuccess){
-        // Get.back();
+        Get.back();
         SnackShow.showSuccess(context, 'Post Created');
       }
     });
@@ -142,7 +142,7 @@ class CreatePage extends ConsumerWidget {
                 ),
                 SizedBox(height: 20.h),
 
-                //login signup button
+                //post button
                 MyButton(
                   isLoading: post.isLoad ? true : null,
                   onPressed:post.isLoad ? null : () {
