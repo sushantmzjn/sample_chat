@@ -42,6 +42,7 @@ class PostService {
     required String userId,
     required XFile image}) async {
     try {
+      final imageName = DateTime.now().toString();
       final ref = FirebaseInstances.fireStorage.ref().child('postImage/${image.name}');
       await ref.putFile(File(image.path));
       final url = await ref.getDownloadURL();
@@ -51,7 +52,7 @@ class PostService {
         'title': title,
         'detail': detail,
         'imageUrl': url,
-        'imageId': image.name,
+        'imageId': image.name + imageName,
         'like': {
           'likes': 0,
           'usernames': []
@@ -60,7 +61,7 @@ class PostService {
       );
 
       return Right(true);
-    }on FirebaseAuthException catch(err){
+    }on FirebaseException catch(err){
       return Left('${err.message}');
     }
   }
@@ -73,7 +74,7 @@ class PostService {
       await ref.delete();
 
       return Right(true);
-    }on FirebaseAuthException catch(err){
+    }on FirebaseException catch(err){
       return  Left('${err.message}');
     }
   }
@@ -107,7 +108,40 @@ class PostService {
       }
       return Right(true);
 
-    } on FirebaseAuthException catch(err){
+    } on FirebaseException catch(err){
+      return  Left('${err.message}');
+    }
+
+  }
+
+  //add likes
+ static Future<Either<String, bool>> addLike(
+     List<String> usernames,
+     String postId,
+     int like)async{
+    try{
+      final response = await postDb.doc(postId).update(
+          {
+            'like': {
+            'likes': like + 1,
+            'usernames': FieldValue.arrayUnion(usernames)
+             }
+          });
+      return Right(true);
+    }on FirebaseException catch(err){
+      return Left('${err.message}');
+    }
+  }
+
+  //add comments
+  static  Future<Either<String, bool>> addComment(List<Comment> comments, String postId) async{
+    try{
+      final response = await postDb.doc(postId).update({
+        'comments': FieldValue.arrayUnion(comments.map((e) => e.toJson()).toList())
+      });
+      return Right(true);
+    } on FirebaseException catch(err){
+      print(err.message);
       return  Left('${err.message}');
     }
 

@@ -13,6 +13,7 @@ class Like{
         usernames: (json['usernames'] as List).map((e) => e as String).toList()
     );
   }
+
 }
 
 //comments
@@ -33,6 +34,13 @@ class Comment {
         imageUrl: json['imageUrl'],
         comment: json['comment']
     );
+  }
+  Map<String, dynamic> toJson(){
+    return{
+      'imageUrl': this.imageUrl,
+      'comment': this.comment,
+      'userName': this.username
+    };
   }
 }
 
